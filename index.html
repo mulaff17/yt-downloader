@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Youtube Downloader</title>
+<link rel="stylesheet" href="tailwind.css">
+</head>
+<body>
+  <div class="flex flex-col items-center justify-center min-h-screen w-full">
+    <h1 id="Title">Youtube Video Downloader</h1>
+    <h2>Input your URL</h2>
+    <div class="flex flex-wrap justify-center w-full">
+      <input class="Lato shadow appearance-none border rounded-lg py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-2 sm:mb-0 sm:mr-2" id="URL-Form" placeholder='https://www.youtube.com/watch?v=MtN1YnoL46Q' />
+
+       
+      <select class="Dropdown-color Lato border border-gray-300 text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 w-1/4 sm:w-auto" id="format">
+
+      
+        <option value="MP3">MP3</option>
+        <option value="MP4">MP4</option>
+      </select>
+    </div>
+    <div class="space-y-5">
+      <button class="Lato text-white font-bold py-2 px-4 rounded" id="Checkbtn" type="button">Check</button>
+      <button class="Lato text-white font-bold py-2 px-4 rounded" id="Downloadbtn" type="button">Download</button>
+    </div>
+    <!-- In this Division the Videotitle will appear after pushing the Check Button -->
+    <div id="CheckResult" class="space-y-3">
+    </div>
+    <!-- In this Division the Downloadbutton will appear after pushing the Download Button -->
+    <div id="downloadsection" class="mt-5">
+    </div>
+    <!-- In this Division the Loadingscree will appear -->
+    <div id="Loadingscreen"></div>  
+  
+  </div>
+</body>
+</html>
+
+
+
+
+
+<script>
+
+// Defining all the variables used in the Javascript
+let URLInput = document.getElementById("URL-Form");
+let Downloadbtn = document.getElementById('Downloadbtn');
+let Checkbtn = document.getElementById('Checkbtn');
+let format = document.getElementById("format");
+
+const ResultHTML = document.getElementById('CheckResult');
+const h2_Heading = document.createElement('h2');
+const p_result = document.createElement('p');
+const downloadsection= document.getElementById('downloadsection');
+const downloadbutton = document.createElement('a');
+const Loadingscreen = document.getElementById('Loadingscreen');
+
+
+// Checks if the Check Button gets pushed
+Checkbtn.addEventListener('click', () => {
+  Loadingscreen.classList.add("loader");
+  checkURL(URLInput.value);
+
+});
+
+// Checks if the Download Button gets pushed and will trigger the function to download$
+Downloadbtn.addEventListener('click', () => {
+  Loadingscreen.classList.add("loader");
+  //Depending on the value of the Dropdown the MP3 or MP4 function gets triggered
+  if (format.value == "MP3") {
+    downloadMp3(URLInput.value)
+  }
+  else if (format.value == "MP4") {
+    downloadMp4(URLInput.value)
+  }
+
+});
+
+
+function checkURL(query) {
+
+// The URL gets sent to the Backend (Node) where it will respond with the title name of the youtube video or throw an exception
+  
+  // EDIT THIS PART TO YOUR OWN SERVER ADDRESS
+  fetch(`http://localhost:3000/checkurl?URL=${encodeURIComponent(query)}`)
+      .then(response => {
+      if (response.ok) {
+        return response.text();
+      } else {
+        throw new Error('Error occurred while checking URL.');
+      }
+    })
+    // This part adds the Text to the HTML
+    .then(result => {
+      h2_Heading.classList.add('custom-h2');
+      h2_Heading.textContent = "Videotitle:"
+      p_result.textContent = result; 
+      ResultHTML.append(h2_Heading);
+      ResultHTML.append(p_result);
+      Loadingscreen.classList.remove("loader");
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      resultElement.textContent = 'An error occurred while checking URL.';
+    });
+}
+
+function downloadMp3(query) {
+
+    // EDIT THIS PART TO YOUR OWN SERVER ADDRESS
+    fetch(`http://localhost:3000/downloadmp3?URL=${query}`)
+    .then(response => {
+      // Trigger the file download
+      response.blob().then(blob => {
+        // Creates Downloadlink
+        const url = window.URL.createObjectURL(blob);
+        // Adds the HTML to the Page
+        Loadingscreen.classList.remove("loader");
+        downloadsection.append(downloadbutton);
+        downloadbutton.id = "downloadbutton"
+        let a = document.getElementById('downloadbutton'); 
+        a.href = url;
+        a.download = 'video.mp3';
+        a.innerText = 'MP3 File Download'; 
+        
+      });
+    });
+}
+
+function downloadMp4(query) {
+
+// EDIT THIS PART TO YOUR OWN SERVER ADDRESS
+fetch(`http://localhost:3000/downloadmp4?URL=${query}`)
+.then(response => {
+    // Trigger the file download
+    response.blob().then(blob => {
+      // Creates Downloadlink
+      const url = window.URL.createObjectURL(blob);
+      // Adds the HTML to the Page
+      Loadingscreen.classList.remove("loader");
+      downloadsection.append(downloadbutton);
+      downloadbutton.id = "downloadbutton"
+      let a = document.getElementById('downloadbutton'); 
+      a.href = url;
+      a.download = 'video.mp4';
+      a.innerText = 'MP4 File Download'; 
+
+    });
+ });
+}
+
+</script>
+</body>
+</html>
+
