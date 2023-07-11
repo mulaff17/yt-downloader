@@ -14,4 +14,70 @@ sudo apt install nodejs
 ```
 node -v
 ```
+4. Install nginx
+```
+sudo apt install nginx npm
+```
+5. Go to var/www directory 
+```
+cd /var/www
+```
+6. Install git
+```
+sudo apt install git
+```
+7. Navigate into the www directory
+```
+cd /var/www
+```
+8. Clone Repo
+```
+git clone https://github.com/mulaff17/yt-downloader.git
+```
+9. Change Nginx Config File
+```
+sudo nano /etc/nginx/sites-enabled/default
+```
+Change the root path of the file to the yt-downloader:
+root /var/www/yt-downloader;
+10. Change the Server URL in the server File
+```
+sudo nano /var/www/yt-downloader/index.html
+```
+Change all the Locations if this comment: (appears in three functions)
+// EDIT THIS PART TO YOUR OWN SERVER ADDRESS
+fetch(`http://localhost:3000/downloadmp4?URL=${query}`)
+
+## Use Nodejs as a Service with PM2
+
+1. Change the Server URL in the server File
+```
+sudo npm install pm2@latest -g
+```
+2. Create a dedicated User for PM2 to run Service
+```
+sudo adduser YOURUSER
+```
+
+3. Add Group
+```
+sudo groupadd YOURGROUP
+
+```
+
+4. Assign the Group to the /var/www/yt-downloader 
+```
+usermod -a -G YOURGROUP YOURUSER
+```
+
+5. Start the Server with pm2 
+```
+pm2 start server.js -u YOURUSER
+```
+6. Start the Service on Startup
+```
+pm2 startup systemd -u YOURUSER
+```
+
+
 
