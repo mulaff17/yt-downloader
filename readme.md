@@ -45,8 +45,10 @@ root /var/www/yt-downloader;
 sudo nano /var/www/yt-downloader/index.html
 ```
 Change all the Locations if this comment: (appears in three functions)
+```
 // EDIT THIS PART TO YOUR OWN SERVER ADDRESS
 fetch(`http://localhost:3000/downloadmp4?URL=${query}`)
+```
 
 ## Use Nodejs as a Service with PM2
 
