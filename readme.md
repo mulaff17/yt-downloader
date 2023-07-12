@@ -62,22 +62,38 @@ sudo adduser YOURUSER
 3. Add Group
 ```
 sudo groupadd YOURGROUP
-
 ```
 
 4. Assign the Group to the /var/www/yt-downloader 
 ```
 usermod -a -G YOURGROUP YOURUSER
 ```
+5. Switch to Your Service User
+```
+sudo su - pm2-execute
+```
+6. Create the Service
+```
+pm2 start server.js
+```
+7. Save the Service
+```
+pm2 save
+```
+8. Create Startup Script
+```
+pm2 startup
+```
+9. Run the Command Output of the command before as a root
+For that switch to the root user and run the command that will be given from the output of the command before that looks similar to this:
+```
+sudo env PATH=$PATH:/usr/bin /usr/local/lib/node_modules/pm2/bin/pm2 startup systemd -u pm2-execute --hp /home/pm2-execute
+```
+10. Restart System and test
+```
+sudo systemctl status pm2-pm2execute
+```
 
-5. Start the Server with pm2 
-```
-pm2 start server.js -u YOURUSER
-```
-6. Start the Service on Startup
-```
-pm2 startup systemd -u YOURUSER
-```
 
 
 
